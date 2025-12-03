@@ -1,30 +1,44 @@
-
 import "bootstrap/dist/css/bootstrap.min.css";
-import './App.css';
-import React, { useState } from 'react';
+import "./App.css";
+import React, { useState } from "react";
 import RecipeForm from "./components/RecipeForm";
 import RecipeList from "./components/RecipeList";
+import RecipeModal from "./components/RecipeModal";
+
 function App() {
-  const [name, setName] = useState("Elias");
-  const [recipe, setRecipe] = useState([
-    {
-      title: 'Biryani',
-      description: 'rice',
-    },
-    {
-      title: 'Pizza',
-      description: 'cheese',
-    },
-  ]);
+  const [recipe, setRecipe] = useState([]);
+  const [loader, setLoader] = useState(false);
+  const [selectedRecipe, setSelectedRecipe] = useState(null);
+  const [modal, setModal] = useState(false);
+
+  const toggle = () => setModal(!modal);
 
   const addRecipe = (newRecipe) => {
-    setRecipe([...recipe, newRecipe]);
-  }
+    setLoader(true);
+
+    setTimeout(() => {
+      setRecipe((prev) => [...prev, newRecipe]);
+      setLoader(false);
+    }, 5000);
+  };
+
   return (
     <>
-      <h1>name: {name}</h1>
-      <RecipeForm />
-      <RecipeList recipe={recipe} />
+      <RecipeForm addRecipe={addRecipe} loader={loader} />
+
+      <RecipeList
+        recipe={recipe}
+        setSelectedRecipe={setSelectedRecipe}
+        toggle={toggle}
+      />
+
+      {selectedRecipe && (
+        <RecipeModal
+          selectedRecipe={selectedRecipe}
+          modal={modal}
+          toggle={toggle}
+        />
+      )}
     </>
   );
 }
